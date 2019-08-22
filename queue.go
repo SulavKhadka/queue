@@ -19,8 +19,8 @@ type Item struct {
 }
 
 //New creates and returns a new queue
-func (q *Topic) New(topicName string) Topic {
-	queue := make([]Item, 0, 10000)
+func (q *Topic) New(topicName string, topicInitialLength int) Topic {
+	queue := make([]Item, 0, topicInitialLength)
 	newTopic := Topic{topicName, queue}
 	return newTopic
 }
@@ -40,7 +40,7 @@ func (q *Topic) Insert(message string) {
 // Get retrieves the first item in the queue
 func (q *Topic) Get() Item {
 
-	if len(q.Queue) > 0 {
+	if len(q.Queue) != 0 {
 		item := q.Queue[0]
 		q.Delete()
 		return item
@@ -56,5 +56,13 @@ func (q *Topic) Length() int {
 
 //Delete removes the top item from the queue
 func (q *Topic) Delete() {
-	q.Queue = q.Queue[1:len(q.Queue)]
+
+	if q.Length() != 0 {
+		q.Queue = q.Queue[1:len(q.Queue)]
+	}
+}
+
+//Clear flushes the queue
+func (q *Topic) Clear() {
+	q.Queue = make([]Item, 0, 128)
 }
